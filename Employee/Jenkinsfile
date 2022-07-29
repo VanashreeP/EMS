@@ -1,20 +1,32 @@
 pipeline {
-  agent any
+    agent any
+    
+    environment {
+        dockerImage= ''
+        registry='VanashreePawashe/employee:1.0'
+    }
     
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-		           sh 'primary'
-		           sh 'docker build -t vanashree/mployee:""$BUILD_ID"" .'
-	       }
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/VanashreeP/EMS.git']]])
+            }
         }
-        stage('Publish') {
+        stage('Build Docker image') {
             steps {
-                withDockerRegistry([credentialsID:"dockerhub_id",url:""]){
-                    sh 'docker push vanashree/mployee:""$BUILD_ID"" '
+                script {
+                    dockerImage=docker.build registry
                 }
             }
         }
-	
+	stage('Uploading image') {
+            steps {
+                script {
+                    docker.withRegistry('',registryCredential) {
+                        dockerImage.push();
+                    }
+                }
+            }
+        }
     }
 }
