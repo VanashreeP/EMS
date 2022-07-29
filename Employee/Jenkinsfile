@@ -1,33 +1,20 @@
 pipeline {
-	agent any
-	environment {
-		DOCKERHUB_CREDENTIALS =  credentials(dockerhub_id) 
-	}
-	stages {
-		stage('SCM Checkout') {
-			steps {
-				git 'https://github.com/VanashreeP/EMS.git'
-			}
-		}
-		stage('Build docker image') {
-			steps {
-				sh 'docker build -t vanashreep/employee:$BUILD_NUMBER .'
-			}
-		}
-		stage('Login to dockerhub') {
-			steps {
-				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-			}
-		}
-		stage('Push image') {
-			steps {
-				sh 'docker push vanashreep/EMS:$BUILD_NUMBER .'
-			}
-		}
-	}
-	post {
-		always {
-			sh 'docker logout'	
-		}
-	}
+  agent any
+    
+    stages {
+        stage('Build') {
+            steps {
+		           sh 'primary'
+		           sh 'docker build -t vanashree/mployee:""$BUILD_ID"" .'
+	       }
+        }
+        stage('Publish') {
+            steps {
+                withDockerRegistry([credentialsID:"dockerhub_id",url:""]){
+                    sh 'docker push vanashree/mployee:""$BUILD_ID"" '
+                }
+            }
+        }
+	
+    }
 }
