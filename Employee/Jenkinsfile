@@ -3,7 +3,8 @@ pipeline {
     
     environment {
         dockerImage= ''
-        registry='VanashreePawashe/employee:1.0'
+        registry='vanashree/employee'
+        registryCredential='dockerhub_id'
     }
     
     stages {
