@@ -1,3 +1,3 @@
-FROM openjdk:latest
+FROM ubuntu:latest
 
 CMD echo "Welcome to EMS"
